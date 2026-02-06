@@ -27,11 +27,12 @@ add_executable(${PROJECT_NAME}
 
   #src
   src/game.cpp
+  src/board.cpp
 
   #include
   include/game.hpp
   include/settings.hpp
-  include/settings.hpp
+  include/board.hpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3-static)

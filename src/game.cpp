@@ -10,7 +10,7 @@ Game::Game() : event{}, running {false} {
         std::format("ERROR: SDL_Init failed: {}", SDL_GetError()));
   }
 
-  const int result = SDL_CreateWindowAndRenderer("Title", Config::WIDTH, Config::HEIGHT, 0, &this->window,
+  const int result = SDL_CreateWindowAndRenderer(Config::TITLE.data(), Config::WIDTH, Config::HEIGHT, 0, &this->window,
                                            &this->renderer);
 
   if (!result) {
@@ -40,6 +40,8 @@ void Game::run() {
 
     SDL_SetRenderDrawColor(this->renderer, 0, 0, 0, 255);
     SDL_RenderClear(this->renderer);
+
+    Board::draw_board(renderer);
 
     SDL_RenderPresent(this->renderer);
   }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "SDL3/SDL.h"
+#include "board.hpp"
 
 class Game {
 public:
@@ -16,6 +16,8 @@ private:
 private:
   SDL_Window *window{};
   SDL_Renderer *renderer{};
+
+  Board board;
 
   SDL_Event event;
   bool running;
