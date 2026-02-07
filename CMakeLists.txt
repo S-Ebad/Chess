@@ -15,7 +15,7 @@ set(SDL_STATIC ON    CACHE BOOL "" FORCE)
 set(SDL_TESTS OFF    CACHE BOOL "" FORCE)
 set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
 set(SDL_INSTALL OFF  CACHE BOOL "" FORCE)
-add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL EXCLUDE_ALL)
+add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL EXCLUDE_FROM_ALL)
 
 #default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
@@ -28,14 +28,22 @@ add_executable(${PROJECT_NAME}
   #src
   src/game.cpp
   src/board.cpp
+  src/piece.cpp
 
   #include
   include/game.hpp
   include/settings.hpp
   include/board.hpp
+  include/types.hpp
+  include/piece.hpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3-static)
+
+#expose assets
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets"
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${PROJECT_SOURCE_DIR}/include)
