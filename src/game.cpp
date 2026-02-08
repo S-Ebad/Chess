@@ -4,7 +4,7 @@
 #include <format>
 #include <stdexcept>
 
-Game::Game() : m_event{}, m_running{false} {
+Game::Game() : m_board{}, m_event{}, m_running{false} {
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     throw std::runtime_error(
         std::format("ERROR: SDL_Init failed: {}", SDL_GetError()));
@@ -13,11 +13,14 @@ Game::Game() : m_event{}, m_running{false} {
   const int result =
       SDL_CreateWindowAndRenderer(Config::TITLE.data(), Config::WIDTH,
                                   Config::HEIGHT, 0, &m_window, &m_renderer);
+  SDL_SetWindowResizable(m_window, false);
 
   if (!result) {
     throw std::runtime_error(std::format(
         "ERROR: SDL_CreateWindowAndRenderer failed: {}", SDL_GetError()));
   }
+
+  m_board.load_textures(m_renderer);
 }
 
 void Game::handle_events() {
@@ -43,6 +46,7 @@ void Game::run() {
     SDL_RenderClear(m_renderer);
 
     Board::draw_board(m_renderer);
+    m_board.draw_pieces(m_renderer);
 
     SDL_RenderPresent(m_renderer);
   }
