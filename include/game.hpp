@@ -11,6 +11,7 @@ public:
 
 private:
   void handle_events();
+  void handle_mouse_input();
 
 private:
   SDL_Window *m_window{};

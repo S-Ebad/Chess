@@ -12,8 +12,16 @@ AssetManager::~AssetManager() {
   }
 }
 
-void AssetManager::add_asset(SDL_Renderer *renderer,
-                             std::string_view img_name) {
+void AssetManager::load_asset(SDL_Renderer *renderer,
+                             const std::string &img_name) {
+  {
+    auto it = m_textures.find(img_name);
+
+    // asset already exists
+    if (it != m_textures.end()) {
+      return;
+    }
+  }
 
   fs::path img_path = m_base_path / img_name;
 
@@ -38,7 +46,7 @@ void AssetManager::add_asset(SDL_Renderer *renderer,
                     img_path.c_str(), SDL_GetError()));
   }
 
-  m_textures.insert({std::string(img_name), img_texture});
+  m_textures.insert({img_name, img_texture});
 
   SDL_DestroySurface(img_surface);
 }
@@ -46,8 +54,9 @@ void AssetManager::add_asset(SDL_Renderer *renderer,
 SDL_Texture *AssetManager::get_asset(const std::string &name) {
   auto it = m_textures.find(name);
 
-  if(it == m_textures.end()) {
-    throw std::runtime_error(std::format("Failed to find texture with name: {}", name));
+  if (it == m_textures.end()) {
+    throw std::runtime_error(
+        std::format("Failed to find texture with name: {}", name));
   }
 
   return it->second;

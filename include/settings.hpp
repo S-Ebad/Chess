@@ -1,9 +1,10 @@
 #pragma once
 
 #include "SDL3/SDL_pixels.h"
+#include <SDL3/SDL_rect.h>
 #include <array>
-#include <string_view>
 #include <filesystem>
+#include <string_view>
 
 namespace Config {
 namespace fs = std::filesystem;
@@ -12,18 +13,24 @@ const auto IMAGES = fs::path{ASSETS_PATH} / "images";
 
 constexpr std::string_view TITLE = "Chess";
 
+// piece size (width & height)
+constexpr SDL_Point PIECE_SIZE = {62, 62};
+
 // window width & height
 constexpr int WIDTH = 512;
 constexpr int HEIGHT = 512;
 
 // board dimensions
-constexpr int DIM_X = 8;
-constexpr int DIM_Y = 8;
+constexpr SDL_Point DIM = {.x = 8, .y = 8};
 
 // square dimensions (pixels)
-constexpr int SQUARE_W = WIDTH / DIM_X;
-constexpr int SQUARE_H = HEIGHT / DIM_Y;
+constexpr int SQUARE_W = WIDTH / DIM.x;
+constexpr int SQUARE_H = HEIGHT / DIM.y;
 
-constexpr std::array<SDL_Color, 2> COLORS = {SDL_Color{121, 156, 177, 255},
-                                             SDL_Color{212, 223, 229, 255}};
+constexpr std::array<SDL_Color, 2> COLORS = {
+    SDL_Color{212, 223, 229, 255},
+    SDL_Color{121, 156, 177, 255},
+};
+
+constexpr const char *STARTING_POS = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 } // namespace Config

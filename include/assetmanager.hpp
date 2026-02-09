@@ -8,8 +8,7 @@ public:
   AssetManager(const std::filesystem::path &base_path);
   ~AssetManager();
 
-  void add_asset(SDL_Renderer *renderer,
-                 std::string_view img_name) noexcept(false);
+  void load_asset(SDL_Renderer *renderer, const std::string &img_name);
 
   SDL_Texture *get_asset(const std::string &name);
 
