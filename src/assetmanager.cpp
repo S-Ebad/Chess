@@ -1,5 +1,6 @@
 #include "assetmanager.hpp"
 #include <format>
+#include <iostream>
 
 namespace fs = std::filesystem;
 
@@ -13,9 +14,9 @@ AssetManager::~AssetManager() {
 }
 
 void AssetManager::load_asset(SDL_Renderer *renderer,
-                             const std::string &img_name) {
+                              const std::string_view &img_name, char key) {
   {
-    auto it = m_textures.find(img_name);
+    auto it = m_textures.find(key);
 
     // asset already exists
     if (it != m_textures.end()) {
@@ -46,17 +47,18 @@ void AssetManager::load_asset(SDL_Renderer *renderer,
                     img_path.c_str(), SDL_GetError()));
   }
 
-  m_textures.insert({img_name, img_texture});
+  m_textures.insert({key, img_texture});
 
   SDL_DestroySurface(img_surface);
+
 }
 
-SDL_Texture *AssetManager::get_asset(const std::string &name) {
-  auto it = m_textures.find(name);
+SDL_Texture *AssetManager::get_asset(const char key) const {
+  auto it = m_textures.find(key);
 
   if (it == m_textures.end()) {
     throw std::runtime_error(
-        std::format("Failed to find texture with name: {}", name));
+        std::format("Failed to find texture with key: {}", key));
   }
 
   return it->second;

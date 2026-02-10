@@ -8,11 +8,11 @@ public:
   AssetManager(const std::filesystem::path &base_path);
   ~AssetManager();
 
-  void load_asset(SDL_Renderer *renderer, const std::string &img_name);
+  void load_asset(SDL_Renderer *renderer, const std::string_view &img_name, char key);
 
-  SDL_Texture *get_asset(const std::string &name);
+  SDL_Texture *get_asset(const char key) const;
 
 private:
   std::filesystem::path m_base_path;
-  std::unordered_map<std::string, SDL_Texture *> m_textures;
+  std::unordered_map<char, SDL_Texture *> m_textures;
 };

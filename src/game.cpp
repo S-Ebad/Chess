@@ -5,7 +5,10 @@
 #include <iostream>
 #include <stdexcept>
 
-Game::Game() : m_event{}, m_running{false} {
+Game::Game()
+    : m_window{nullptr}, m_renderer{nullptr}, m_manager{Config::IMAGES},
+      m_event{}, m_running{false} {
+
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     throw std::runtime_error(
         std::format("ERROR: SDL_Init failed: {}", SDL_GetError()));
@@ -21,20 +24,16 @@ Game::Game() : m_event{}, m_running{false} {
         "ERROR: SDL_CreateWindowAndRenderer failed: {}", SDL_GetError()));
   }
 
-  this->m_board = Board{m_renderer, Config::STARTING_POS};
+  // preload all assets
+  for(const auto &[key, texture_path] : Config::PIECE_TEXTURES) {
+    m_manager.load_asset(m_renderer, texture_path, key);
+  }
+
+  m_board.load_fen(m_manager, Config::STARTING_POS);
 }
 
 void Game::handle_mouse_input() {
-  float x = m_event.button.x;
-  float y = m_event.button.y;
-
-  int row = static_cast<int>(y / Config::SQUARE_W);
-  int col = static_cast<int>(x / Config::SQUARE_H);
-
-  int idx = Board::to_idx(row, col);
-
-  std::cout << "clicked: " << Board::file_char(Board::to_idx(row, col))
-            << Config::DIM.x - Board::rank(idx) << '\n';
+  // TODO: implement piece selection
 }
 
 void Game::handle_events() {
@@ -46,6 +45,7 @@ void Game::handle_events() {
 
     case SDL_EVENT_MOUSE_BUTTON_DOWN:
       handle_mouse_input();
+      break;
 
     default:
       break;

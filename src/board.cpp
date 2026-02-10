@@ -1,35 +1,77 @@
 #include "board.hpp"
 #include "settings.hpp"
 #include <SDL3/SDL.h>
+#include <format>
+#include <iostream>
 
-Board::Board(SDL_Renderer *renderer, std::string_view fen) : m_pieces{}, manager{Config::IMAGES} {
-  this->parse_fen(renderer, fen);
+Board::Board() : m_pieces{} {}
+
+static std::pair<PieceType, Side> fen_to_piece(char c) {
+
+  Side side = std::isupper(c) ? Side::White : Side::Black;
+
+  switch (std::tolower(c)) {
+  case 'r':
+    return {PieceType::Rook, side};
+  case 'n':
+    return {PieceType::Knight, side};
+  case 'b':
+    return {PieceType::Bishop, side};
+  case 'q':
+    return {PieceType::Queen, side};
+  case 'k':
+    return {PieceType::King, side};
+  case 'p':
+    return {PieceType::Pawn, side};
+  default:
+    throw std::runtime_error("Invalid Piece");
+  }
 }
 
-void Board::parse_fen(SDL_Renderer *renderer, std::string_view fen) {
-  static const std::unordered_map<char, const char*> ch_to_img {
-    { 'p', "bPawn.png" },
-    { 'n', "bKnight.png" },
-    { 'b', "bBishop.png" },
-    { 'r', "bRook.png" },
-    { 'q', "bQueen.png" },
-    { 'k', "bKing.png" },
-
-    { 'P', "wPawn.png" },
-    { 'N', "wKnight.png" },
-    { 'B', "wBishop.png" },
-    { 'R', "wRook.png" },
-    { 'Q', "wQueen.png" },
-    { 'K', "wKing.png" }
-  };
-
-  // positions turn castling en-passant half-move full-move
+void Board::load_fen(const AssetManager &manager, std::string_view fen) {
   std::size_t positions = fen.find(' ');
-  if(positions == std::string_view::npos)
+  if (positions == std::string_view::npos)
     throw std::runtime_error("invalid FEN string. Failed to find space");
 
-  for(std::size_t i = 0; i < positions; i++) {
-    // TODO: Parse FEN. Only parse position & turn for now. The rest haven't been implemented yet.
+  std::size_t j = 0;
+  for (std::size_t i = 0; i < positions; i++) {
+    const char c = fen[i];
+
+    if (c == '/') {
+      // each / should have dim.x (usually 8) squares
+      if (j % (Config::DIM.x) != 0) {
+        throw std::runtime_error(
+            std::format("malformed fen notation: goes beyond dimension (up to {})", j));
+      }
+
+      continue;
+    }
+
+    if (std::isdigit(c)) {
+      j += static_cast<size_t>(c - '0');
+
+      continue;
+    }
+
+    auto [type, side] = fen_to_piece(c);
+
+    m_pieces[(size_t)j] = Piece{type, side, manager.get_asset(c)};
+
+    j++;
+  }
+
+  switch(fen[positions + 1]) {
+  case 'w':
+    m_turn = Side::White;
+    break;
+  case 'b':
+    m_turn = Side::Black;
+    break;
+
+  default:
+    throw std::runtime_error(std::format(
+        "malformed fen notation: Turn is invalid: {}", fen[positions + 1]
+    ));
   }
 }
 
@@ -37,8 +79,8 @@ void Board::draw_pieces(SDL_Renderer *renderer) {
   for (std::size_t i = 0; i < m_pieces.size(); i++) {
     auto &piece = m_pieces[i];
 
-    SDL_Point position{.x = Board::file(i) * Config::SQUARE_W,
-                       .y = Board::rank(i) * Config::SQUARE_H};
+    SDL_Point position{.x = Board::file((int)i) * Config::SQUARE_W,
+                       .y = Board::rank((int)i) * Config::SQUARE_H};
     piece.draw(renderer, position);
   }
 }

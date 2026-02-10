@@ -9,7 +9,7 @@ public:
   Piece(PieceType type, Side side, SDL_Texture *texture)
       : m_texture{texture}, m_type{type}, m_side{side} {}
 
-  void draw(SDL_Renderer *renderer, SDL_Point position);
+  void draw(SDL_Renderer *renderer, SDL_Point position) const;
 
 private:
   SDL_Texture *m_texture;

@@ -1,7 +1,7 @@
 #include "piece.hpp"
 #include "settings.hpp"
 
-void Piece::draw(SDL_Renderer *renderer, SDL_Point position) {
+void Piece::draw(SDL_Renderer *renderer, SDL_Point position) const {
   if (m_type == PieceType::None || m_side == Side::None) {
     return;
   }

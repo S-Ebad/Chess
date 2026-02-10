@@ -8,12 +8,10 @@
 
 class Board {
 public:
-  Board() : m_pieces{}, manager{Config::IMAGES} {};
-
   // board takes renderer so it can load all the assets
-  Board(SDL_Renderer *renderer, std::string_view fen);
+  Board();
 
-  // void load_textures(SDL_Renderer *renderer);
+  void load_fen(const AssetManager &manager, const std::string_view fen);
 
   void draw_pieces(SDL_Renderer *renderer);
   static void draw_board(SDL_Renderer *renderer);
@@ -23,23 +21,16 @@ public:
   }
 
   // row
-  static constexpr inline int rank(int idx) {
-    return idx / Config::DIM.x;
-  }
+  static constexpr inline int rank(int idx) { return idx / Config::DIM.x; }
 
   // column
-  static constexpr inline int file(int idx) {
-    return (idx % Config::DIM.x);
-  }
+  static constexpr inline int file(int idx) { return (idx % Config::DIM.x); }
 
   static constexpr inline char file_char(int idx) {
-    return (idx / Config::DIM.x) + 'a';
+    return static_cast<char>(idx / Config::DIM.x) + 'a';
   }
 
 private:
-  void parse_fen(SDL_Renderer *renderer, std::string_view fen);
-
-private:
+  Side m_turn;
   std::array<Piece, 64> m_pieces;
-  AssetManager manager;
 };
