@@ -11,14 +11,15 @@ public:
 
 private:
   void handle_events();
-
+  void handle_mouse_input();
 
 private:
-  SDL_Window *window{};
-  SDL_Renderer *renderer{};
+  SDL_Window *m_window;
+  SDL_Renderer *m_renderer;
 
-  Board board;
+  Board m_board;
+  AssetManager m_manager;
 
-  SDL_Event event;
-  bool running;
+  SDL_Event m_event;
+  bool m_running;
 };

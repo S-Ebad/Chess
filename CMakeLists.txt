@@ -9,17 +9,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 #for clangd
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-#build static SDL
-set(SDL_SHARED OFF   CACHE BOOL "" FORCE)
-set(SDL_STATIC ON    CACHE BOOL "" FORCE)
-set(SDL_TESTS OFF    CACHE BOOL "" FORCE)
-set(SDL_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(SDL_INSTALL OFF  CACHE BOOL "" FORCE)
-add_subdirectory(${PROJECT_SOURCE_DIR}/vendor/SDL EXCLUDE_ALL)
+#sdl
+find_package(SDL3 REQUIRED)
 
-#default to release
+#default to debug
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
-  set(CMAKE_BUILD_TYPE Release CACHE STRING "Build type" FORCE)
+  set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 endif()
 
 add_executable(${PROJECT_NAME}
@@ -28,14 +23,25 @@ add_executable(${PROJECT_NAME}
   #src
   src/game.cpp
   src/board.cpp
+  src/piece.cpp
+  src/assetmanager.cpp
 
   #include
   include/game.hpp
   include/settings.hpp
   include/board.hpp
+  include/types.hpp
+  include/piece.hpp
+  include/assetmanager.hpp
 )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE SDL3::SDL3-static)
+target_link_libraries(${PROJECT_NAME} PRIVATE
+  SDL3::SDL3)
+
+#expose assets
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+  ASSETS_PATH="${CMAKE_SOURCE_DIR}/assets"
+)
 
 target_include_directories(${PROJECT_NAME} PRIVATE
   ${PROJECT_SOURCE_DIR}/include)
