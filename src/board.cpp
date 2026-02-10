@@ -2,7 +2,6 @@
 #include "settings.hpp"
 #include <SDL3/SDL.h>
 #include <format>
-#include <iostream>
 
 Board::Board() : m_pieces{} {}
 
@@ -40,8 +39,8 @@ void Board::load_fen(const AssetManager &manager, std::string_view fen) {
     if (c == '/') {
       // each / should have dim.x (usually 8) squares
       if (j % (Config::DIM.x) != 0) {
-        throw std::runtime_error(
-            std::format("malformed fen notation: goes beyond dimension (up to {})", j));
+        throw std::runtime_error(std::format(
+            "malformed fen notation: goes beyond dimension (up to {})", j));
       }
 
       continue;
@@ -55,12 +54,12 @@ void Board::load_fen(const AssetManager &manager, std::string_view fen) {
 
     auto [type, side] = fen_to_piece(c);
 
-    m_pieces[(size_t)j] = Piece{type, side, manager.get_asset(c)};
+    m_pieces[j] = Piece{type, side, manager.get_asset(c)};
 
     j++;
   }
 
-  switch(fen[positions + 1]) {
+  switch (fen[positions + 1]) {
   case 'w':
     m_turn = Side::White;
     break;
@@ -70,9 +69,20 @@ void Board::load_fen(const AssetManager &manager, std::string_view fen) {
 
   default:
     throw std::runtime_error(std::format(
-        "malformed fen notation: Turn is invalid: {}", fen[positions + 1]
-    ));
+        "malformed fen notation: Turn is invalid: {}", fen[positions + 1]));
   }
+}
+
+const Piece* Board::get_piece(int square) const {
+  if (square < 0 || square >= 64)
+    throw std::runtime_error(std::format("square out of bounds: {}", square));
+
+  const Piece &piece = m_pieces[square];
+
+  if(piece.get_side() == Side::None || piece.get_type() == PieceType::None)
+    return nullptr;
+
+  return &piece;
 }
 
 void Board::draw_pieces(SDL_Renderer *renderer) {

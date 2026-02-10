@@ -25,6 +25,7 @@ add_executable(${PROJECT_NAME}
   src/board.cpp
   src/piece.cpp
   src/assetmanager.cpp
+  src/moves.cpp
 
   #include
   include/game.hpp
@@ -33,6 +34,7 @@ add_executable(${PROJECT_NAME}
   include/types.hpp
   include/piece.hpp
   include/assetmanager.hpp
+  include/moves.hpp
 )
 
 target_link_libraries(${PROJECT_NAME} PRIVATE

@@ -11,6 +11,14 @@ public:
 
   void draw(SDL_Renderer *renderer, SDL_Point position) const;
 
+  PieceType get_type() const {
+    return m_type;
+  }
+
+  Side get_side() const {
+    return m_side;
+  }
+
 private:
   SDL_Texture *m_texture;
 

@@ -25,15 +25,25 @@ Game::Game()
   }
 
   // preload all assets
-  for(const auto &[key, texture_path] : Config::PIECE_TEXTURES) {
+  for (const auto &[key, texture_path] : Config::PIECE_TEXTURES) {
     m_manager.load_asset(m_renderer, texture_path, key);
   }
 
-  m_board.load_fen(m_manager, Config::STARTING_POS);
+  m_board.load_fen(m_manager, "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
 }
 
 void Game::handle_mouse_input() {
-  // TODO: implement piece selection
+  int x = m_event.button.x;
+  int y = m_event.button.y;
+
+  int row = static_cast<int>(y / Config::SQUARE_H);
+  int col = static_cast<int>(x / Config::SQUARE_W);
+
+  int square = Board::to_idx(row, col);
+
+  legal_moves = MoveGenerator::generate_pseudo_legal_moves(m_board, square);
+
+  std::cout << square << '\n';
 }
 
 void Game::handle_events() {
@@ -53,6 +63,24 @@ void Game::handle_events() {
   }
 }
 
+void Game::draw_legal_moves() {
+  SDL_FRect small_rect{.x = 0.f,
+                       .y = 0.f,
+                       .w = Config::SQUARE_W / 10.f,
+                       .h = Config::SQUARE_H / 10.f};
+  SDL_Color color{255, 0, 0, 255};
+  for (const Move &move : legal_moves) {
+    int file = Board::file(move.to);
+    int rank = Board::rank(move.to);
+
+    small_rect.x = static_cast<float>(file * Config::SQUARE_W);
+    small_rect.y = static_cast<float>(rank * Config::SQUARE_H);
+
+    SDL_SetRenderDrawColor(m_renderer, color.r, color.g, color.b, 255);
+    SDL_RenderFillRect(m_renderer, &small_rect);
+  }
+}
+
 void Game::run() {
   m_running = true;
 
@@ -64,6 +92,8 @@ void Game::run() {
 
     Board::draw_board(m_renderer);
     m_board.draw_pieces(m_renderer);
+
+    draw_legal_moves();
 
     SDL_RenderPresent(m_renderer);
   }

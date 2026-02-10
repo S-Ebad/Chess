@@ -13,11 +13,17 @@ public:
 
   void load_fen(const AssetManager &manager, const std::string_view fen);
 
+  const Piece* get_piece(int square) const;
+
   void draw_pieces(SDL_Renderer *renderer);
   static void draw_board(SDL_Renderer *renderer);
 
   static constexpr inline int to_idx(int row, int col) {
     return row * Config::DIM.x + col;
+  }
+
+  Side get_turn() const {
+    return m_turn;
   }
 
   // row
