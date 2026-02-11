@@ -8,9 +8,10 @@ struct Move {
   int from;
   int to;
 
-  Move(int from, int to) : from{from}, to{to} {}
+  PieceType promotion;
 
-  PieceType promotion = PieceType::None;
+  Move(int from, int to, PieceType promotion=PieceType::None) : from{from}, to{to}, promotion{promotion} {}
+
 };
 
 class MoveGenerator {

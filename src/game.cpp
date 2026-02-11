@@ -29,7 +29,7 @@ Game::Game()
     m_manager.load_asset(m_renderer, texture_path, key);
   }
 
-  m_board.load_fen(m_manager, "rnbqkbnr/8/8/8/8/8/8/RNBQKBNR w KQkq - 0 1");
+  m_board.load_fen(m_manager, "8/8/8/rnbqkbnr/8/8/8/RNBQKBNR w KQkq - 0 1");
 }
 
 void Game::handle_mouse_input() {
@@ -68,7 +68,9 @@ void Game::draw_legal_moves() {
                        .y = 0.f,
                        .w = Config::SQUARE_W / 10.f,
                        .h = Config::SQUARE_H / 10.f};
+
   SDL_Color color{255, 0, 0, 255};
+
   for (const Move &move : legal_moves) {
     int file = Board::file(move.to);
     int rank = Board::rank(move.to);
