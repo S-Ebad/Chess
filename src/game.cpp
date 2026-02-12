@@ -2,11 +2,10 @@
 #include "settings.hpp"
 #include <SDL3/SDL.h>
 #include <format>
-#include <iostream>
 #include <stdexcept>
 
 Game::Game()
-    : m_window{nullptr}, m_renderer{nullptr}, m_manager{Config::IMAGES},
+    : m_window{nullptr}, m_renderer{nullptr}, m_manager{Config::IMAGES}, m_board{},
       m_event{}, m_running{false} {
 
   if (!SDL_Init(SDL_INIT_VIDEO)) {
@@ -29,6 +28,7 @@ Game::Game()
     m_manager.load_asset(m_renderer, texture_path, key);
   }
 
+  m_board.create_board_texture(m_renderer);
   m_board.load_fen(m_manager, Config::STARTING_POS);
 }
 
@@ -62,7 +62,7 @@ void Game::run() {
     SDL_SetRenderDrawColor(m_renderer, 0, 0, 0, 255);
     SDL_RenderClear(m_renderer);
 
-    Board::draw_board(m_renderer);
+    m_board.draw_board(m_renderer);
     m_board.draw_pieces(m_renderer);
 
     SDL_RenderPresent(m_renderer);

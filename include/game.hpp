@@ -17,8 +17,8 @@ private:
   SDL_Window *m_window;
   SDL_Renderer *m_renderer;
 
-  Board m_board;
   AssetManager m_manager;
+  Board m_board;
 
   SDL_Event m_event;
   bool m_running;
