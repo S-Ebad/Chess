@@ -10,11 +10,16 @@ class Board {
 public:
   // board takes renderer so it can load all the assets
   Board();
+  ~Board();
+
+  void create_board_texture(SDL_Renderer *renderer);
+
+  void create_board_texture(SDL_Renderer *renderer);
 
   void load_fen(const AssetManager &manager, const std::string_view fen);
 
   void draw_pieces(SDL_Renderer *renderer);
-  static void draw_board(SDL_Renderer *renderer);
+  void draw_board(SDL_Renderer *renderer);
 
   static constexpr inline int to_idx(int row, int col) {
     return row * Config::DIM.x + col;
@@ -33,4 +38,5 @@ public:
 private:
   Side m_turn;
   std::array<Piece, 64> m_pieces;
+  SDL_Texture *m_board_texture;
 };

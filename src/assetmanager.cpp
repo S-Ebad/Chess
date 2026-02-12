@@ -1,6 +1,5 @@
 #include "assetmanager.hpp"
 #include <format>
-#include <iostream>
 
 namespace fs = std::filesystem;
 
