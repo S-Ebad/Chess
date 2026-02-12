@@ -48,7 +48,11 @@ static void draw_board(SDL_Renderer *renderer) {
   }
 }
 
-Board::Board() : m_pieces{} {}
+Board::Board() : m_pieces{}, m_board_texture{nullptr} {}
+Board::~Board() {
+  if(m_board_texture)
+    SDL_DestroyTexture(m_board_texture);
+}
 
 void Board::create_board_texture(SDL_Renderer *renderer) {
   m_board_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,

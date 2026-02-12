@@ -10,6 +10,9 @@ class Board {
 public:
   // board takes renderer so it can load all the assets
   Board();
+  ~Board();
+
+  void create_board_texture(SDL_Renderer *renderer);
 
   void create_board_texture(SDL_Renderer *renderer);
 
