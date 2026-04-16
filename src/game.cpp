@@ -4,9 +4,39 @@
 #include <format>
 #include <stdexcept>
 
+static const char *get_side_str(Side side) {
+  switch (side) {
+  case Side::White:
+    return "White";
+  case Side::Black:
+    return "Black";
+  case Side::None:
+    return "Side_None";
+  }
+}
+
+static const char *get_type_str(PieceType type) {
+  switch (type) {
+  case PieceType::King:
+    return "King";
+  case PieceType::Queen:
+    return "Queen";
+  case PieceType::Rook:
+    return "Rook";
+  case PieceType::Knight:
+    return "Knight";
+  case PieceType::Bishop:
+    return "Bishop";
+  case PieceType::Pawn:
+    return "Pawn";
+  case PieceType::None:
+    return "Type_None";
+  }
+}
+
 Game::Game()
-    : m_window{nullptr}, m_renderer{nullptr}, m_manager{Config::IMAGES}, m_board{},
-      m_event{}, m_running{false} {
+    : m_window{nullptr}, m_renderer{nullptr}, m_manager{Config::IMAGES},
+      m_board{}, m_event{}, m_running{false} {
 
   if (!SDL_Init(SDL_INIT_VIDEO)) {
     throw std::runtime_error(
@@ -24,7 +54,7 @@ Game::Game()
   }
 
   // preload all assets
-  for(const auto &[key, texture_path] : Config::PIECE_TEXTURES) {
+  for (const auto &[key, texture_path] : Config::PIECE_TEXTURES) {
     m_manager.load_asset(m_renderer, texture_path, key);
   }
 
@@ -33,7 +63,17 @@ Game::Game()
 }
 
 void Game::handle_mouse_input() {
-  // TODO: implement piece selection
+  size_t x = static_cast<size_t>(m_event.button.x / Config::SQUARE_W);
+  size_t y = static_cast<size_t>(m_event.button.y / Config::SQUARE_H);
+
+  Piece *selected = m_board.get_piece(Board::to_idx(y, x));
+
+  if (selected)
+    printf("Piece{ .side=%s, .type=%s }\n", get_side_str(selected->get_side()),
+           get_type_str(selected->get_type()));
+  else
+    printf("Piece{ .side=%s, .type=%s }\n", get_side_str(Side::None),
+           get_type_str(PieceType::None));
 }
 
 void Game::handle_events() {
@@ -66,6 +106,7 @@ void Game::run() {
     m_board.draw_pieces(m_renderer);
 
     SDL_RenderPresent(m_renderer);
+    SDL_Delay(33);
   }
 }
 
