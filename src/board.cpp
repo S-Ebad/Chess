@@ -50,14 +50,14 @@ static void draw_board(SDL_Renderer *renderer) {
 
 Board::Board() : m_pieces{}, m_board_texture{nullptr} {}
 Board::~Board() {
-  if(m_board_texture)
+  if (m_board_texture)
     SDL_DestroyTexture(m_board_texture);
 }
 
 void Board::create_board_texture(SDL_Renderer *renderer) {
   m_board_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA32,
-                                           SDL_TEXTUREACCESS_TARGET,
-                                           Config::WIDTH, Config::HEIGHT);
+                                      SDL_TEXTUREACCESS_TARGET, Config::WIDTH,
+                                      Config::HEIGHT);
 
   SDL_SetRenderTarget(renderer, m_board_texture);
   ::draw_board(renderer);
@@ -91,7 +91,7 @@ void Board::load_fen(const AssetManager &manager, std::string_view fen) {
 
     auto [type, side] = fen_to_piece(c);
 
-    m_pieces[(size_t)j] = Piece{type, side, manager.get_asset(c)};
+    m_pieces[j] = Piece{type, side, manager.get_asset(c)};
 
     j++;
   }
@@ -110,6 +110,22 @@ void Board::load_fen(const AssetManager &manager, std::string_view fen) {
   }
 }
 
+Piece *Board::get_piece(std::size_t idx) {
+  if (idx >= m_pieces.size())
+    return nullptr;
+
+  Piece *piece = &m_pieces[idx];
+
+  return piece;
+}
+
+void Board::move_piece(size_t from, size_t to) {
+  if(to >= m_pieces.size() || from >= m_pieces.size())
+    return;
+
+  m_pieces[to] = std::move(m_pieces[from]);
+}
+
 void Board::draw_pieces(SDL_Renderer *renderer) {
   for (std::size_t i = 0; i < m_pieces.size(); i++) {
     auto &piece = m_pieces[i];
@@ -121,7 +137,10 @@ void Board::draw_pieces(SDL_Renderer *renderer) {
 }
 
 void Board::draw_board(SDL_Renderer *renderer) {
-  SDL_FRect board_dims { .x=0.f, .y=0.f, .w=static_cast<float>(Config::WIDTH), .h=static_cast<float>(Config::HEIGHT) };
+  SDL_FRect board_dims{.x = 0.f,
+                       .y = 0.f,
+                       .w = static_cast<float>(Config::WIDTH),
+                       .h = static_cast<float>(Config::HEIGHT)};
 
   SDL_RenderTexture(renderer, m_board_texture, nullptr, &board_dims);
 }

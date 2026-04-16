@@ -16,6 +16,10 @@ public:
 
   void load_fen(const AssetManager &manager, const std::string_view fen);
 
+  Piece *get_piece(std::size_t idx);
+
+  void move_piece(size_t from, size_t to);
+
   void draw_pieces(SDL_Renderer *renderer);
   void draw_board(SDL_Renderer *renderer);
 
@@ -35,6 +39,6 @@ public:
 
 private:
   Side m_turn;
-  std::array<Piece, 64> m_pieces;
+  std::array<Piece, Config::DIM.x * Config::DIM.y> m_pieces;
   SDL_Texture *m_board_texture;
 };
